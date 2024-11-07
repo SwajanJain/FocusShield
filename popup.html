@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FocusShield Popup</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>FocusShield</h1>
+
+    <form id="add-site-form">
+      <input type="text" id="new-domain" placeholder="Add website (e.g., example.com)" required>
+      <input type="number" id="new-timeLimit" placeholder="Time Limit (min)" required>
+      <input type="number" id="new-visitLimit" placeholder="Visit Limit" required>
+      <button type="submit">Add</button>
+    </form>
+
+    <ul id="site-list"></ul>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
