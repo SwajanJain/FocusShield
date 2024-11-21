@@ -7,7 +7,9 @@
     "storage",
     "tabs",
     "alarms",
-    "scripting"
+    "scripting",
+    "history", // Add this line to include the 'history' permission
+    "idle" // Add this line to include the 'idle' permission
   ],
   "host_permissions": [
     "<all_urls>"
