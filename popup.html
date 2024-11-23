@@ -1,28 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>FocusShield Popup</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusShield</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
-    <h1>FocusShield</h1>
+    <header>
+      <h1>FocusShield</h1>
+    </header>
 
-    <form id="add-site-form">
-      <input type="text" id="new-domain" placeholder="Add website (e.g., example.com)" required>
-      <input type="number" id="new-timeLimit" placeholder="Time Limit (min)" required>
-      <input type="number" id="new-visitLimit" placeholder="Visit Limit" required>
-      <button type="submit">Add</button>
-    </form>
+    <section class="add-site">
+      <h2>Add Monitored Site</h2>
+      <form id="add-site-form">
+        <div class="form-group">
+          <label for="new-domain">Website (e.g., example.com):</label>
+          <input type="text" id="new-domain" name="new-domain" placeholder="Enter website domain" required>
+        </div>
+        <div class="form-group">
+          <label for="new-timeLimit">Time Limit (minutes):</label>
+          <input type="number" id="new-timeLimit" name="new-timeLimit" min="0" placeholder="0 for no limit" required>
+        </div>
+        <div class="form-group">
+          <label for="new-visitLimit">Visit Limit:</label>
+          <input type="number" id="new-visitLimit" name="new-visitLimit" min="0" placeholder="0 for unlimited visits" required>
+        </div>
+        <button type="submit" class="submit-btn">Add Site</button>
+      </form>
+    </section>
 
-    <h2>Monitored Sites</h2>
-    <ul id="site-list"></ul>
+    <section class="monitored-sites">
+      <h2>Monitored Sites</h2>
+      <ul id="site-list" aria-describedby="monitored-sites-desc">
+        <!-- Dynamically filled by popup.js -->
+      </ul>
+    </section>
 
-    <!-- New section for browsing insights -->
-    <h2>Your Browsing Insights</h2>
-    <div id="usage-summary">
-      <!-- This will be populated by popup.js -->
-    </div>
+    <section class="browsing-insights">
+      <h2>Your Browsing Insights</h2>
+      <div id="usage-summary">
+        <!-- Dynamically filled by popup.js -->
+      </div>
+    </section>
   </div>
 
   <script src="popup.js"></script>

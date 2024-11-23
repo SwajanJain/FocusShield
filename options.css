@@ -1,43 +1,85 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+  font-family: 'Open Sans', sans-serif; /* Consistent and readable font */
+  margin: 20px;
+  background-color: #f7f7f7; /* Neutral background color for better readability */
+  color: #333; /* High-contrast text color for readability */
+}
+
+h1 {
+  text-align: center;
+  color: #4A90E2; /* Soft blue for a modern look */
+  margin-bottom: 20px; /* Provides spacing below the header */
+}
+
+#site-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff; /* White background to emphasize form area */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  border-radius: 8px; /* Rounded corners for a softer look */
+}
+
+#site-form input, #site-form button {
+  margin: 10px 0;
+  padding: 12px;
+  font-size: 16px; /* Sufficient size for easy interaction */
+  border: 1px solid #ccc; /* Subtle borders */
+  border-radius: 4px; /* Consistency in border radius */
+}
+
+#site-form input:focus, #site-form button:focus {
+  border-color: #0056b3; /* Highlight color on focus for visibility */
+  outline: none; /* Remove default focus outline */
+}
+
+#site-form button {
+  background-color: #5CACEE; /* Less intense button color for a friendly interface */
+  color: white; /* White text for contrast */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+#site-form button:hover {
+  background-color: #4A90E2; /* Darker shade on hover for interactive feedback */
+}
+
+#site-list {
+  list-style: none; /* No bullets for a cleaner look */
+  padding: 0;
+  max-width: 500px;
+  margin: 20px auto;
+  background: #ffffff; /* Consistent background with form */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Uniform shadow as form */
+}
+
+#site-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0;
+  padding: 12px;
+  background: #EEF9FF; /* Very light blue background for list items for subtle visual segmentation */
+  border-radius: 4px; /* Rounded corners for list items */
+}
+
+#site-list button {
+  background: #F08080; /* Soft red color for delete button */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px; /* Consistency in rounding */
+}
+
+#site-list button:hover {
+  background: #CD5C5C; /* Darker red on hover for visual feedback */
+}
+
+@media (max-width: 600px) {
+  #site-form, #site-list {
+    max-width: 90%; /* Better responsiveness */
   }
-  
-  h1 {
-    text-align: center;
-  }
-  
-  #site-form {
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
-  #site-form input, #site-form button {
-    margin: 5px 0;
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  #site-list {
-    list-style: none;
-    padding: 0;
-    max-width: 400px;
-    margin: 20px auto;
-  }
-  
-  #site-list li {
-    display: flex;
-    justify-content: space-between;
-    margin: 5px 0;
-    padding: 10px;
-    background: #f0f0f0;
-  }
-  
-  #site-list button {
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-  }  
+}

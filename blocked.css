@@ -1,20 +1,82 @@
 body {
-    background-color: #f44336;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding-top: 50px;
-  }
-  
-  #message {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  h1 {
-    font-size: 48px;
-  }
-  
-  p {
-    font-size: 24px;
-  }  
+  background-color: #F8F9FA;  /* Lighter and more neutral background */
+  color: #333;               /* Ensuring good readability */
+  font-family: 'Roboto', sans-serif;  /* More modern and engaging font */
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;       /* Centering content horizontally */
+  height: 100vh;
+}
+
+.message-container {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;       /* Slightly increased border radius for a softer look */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);  /* Slightly deeper shadow for a subtle depth */
+  margin: auto;              /* Auto margins for horizontal centering */
+  max-width: 600px;
+  width: 90%;                /* Responsive width */
+  transition: all 0.3s ease; /* Smooth transitions for any changes */
+}
+
+h1 {
+  font-size: 26px;          /* Slightly smaller size for a less aggressive appearance */
+  color: #4A90E2;           /* Softer shade of blue for a calming effect */
+  margin-bottom: 25px;      /* Increased space for better visual separation */
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.6;         /* Improved line spacing for better readability */
+  margin-bottom: 20px;
+}
+
+.timer {
+  font-size: 22px;          /* Larger font size for emphasis */
+  font-weight: bold;
+  color: #28A745;
+  margin-bottom: 20px;
+  animation: pulse 1s infinite; /* Subtle pulse animation for the timer */
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.suggestions {
+  text-align: center;       /* Centering suggestions for better aesthetics */
+  margin-top: 30px;         /* More vertical spacing */
+}
+
+.suggestions h2 {
+  font-size: 24px;
+  color: #007BFF;
+  margin-bottom: 15px;
+}
+
+.suggestions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.suggestions li {
+  padding: 8px;             /* Slightly reduced padding for a neater appearance */
+  margin-bottom: 10px;
+}
+
+.suggestions a {
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: 500;         /* Medium font weight for better emphasis */
+}
+
+.suggestions a:hover {
+  text-decoration: underline;
+  color: #0056b3;           /* Darker blue on hover for better interactivity */
+}

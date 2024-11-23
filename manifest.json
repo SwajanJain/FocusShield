@@ -8,8 +8,8 @@
     "tabs",
     "alarms",
     "scripting",
-    "history", // Add this line to include the 'history' permission
-    "idle" // Add this line to include the 'idle' permission
+    "history",
+    "idle"
   ],
   "host_permissions": [
     "<all_urls>"

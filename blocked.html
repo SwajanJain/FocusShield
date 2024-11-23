@@ -3,13 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Restricted</title>
+    <title>Time for a Break!</title>
     <link rel="stylesheet" href="blocked.css">
 </head>
 <body>
-    <div class="message-container">
-        <h1>Access Restricted</h1>
-        <p>That’s enough for today! Your access will reset in 24 hours, so find another way to waste time until then.</p>
+    <div class="container">
+        <h1>Time for a Break!</h1>
+        <p>You've reached your limit for this site. It's a perfect time to stretch, grab a cup of water, or reflect on your accomplishments today!</p>
+        
+        <div class="timer">
+            <p>Your access will reset in:</p>
+            <span id="countdown">24:00:00</span> <!-- Consider adding an animated countdown here -->
+        </div>
+        
+        <div class="suggestions">
+            <h2>Need a break?</h2>
+            <ul>
+                <li><a href="#" class="suggestion-link">
+                    <img src="icons/relax.png" alt="Relaxation icon">5-minute relaxation exercises
+                </a></li>
+                <li><a href="#" class="suggestion-link">
+                    <img src="icons/productivity.png" alt="Productivity icon">Quick productivity tips
+                </a></li>
+                <li><a href="#" class="suggestion-link">
+                    <img src="icons/learn.png" alt="Learning icon">Learn something new
+                </a></li>
+            </ul>
+        </div>
     </div>
+
+    <script src="blocked.js"></script>
 </body>
 </html>

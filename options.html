@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FocusShield Options</title>
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <h1>FocusShield Settings</h1>
-  <form id="site-form">
-    <input type="text" id="domain" placeholder="Website Domain (e.g., example.com)" required>
-    <input type="number" id="timeLimit" placeholder="Time Limit (minutes)" required>
-    <input type="number" id="visitLimit" placeholder="Visit Limit" required>
-    <button type="submit">Add Site</button>
-  </form>
-  <ul id="site-list"></ul>
+  <header>
+    <h1>FocusShield Settings</h1>
+  </header>
+  <section class="settings-form">
+    <form id="site-form" aria-label="Add a new site to monitor">
+      <div class="form-group">
+        <label for="domain">Website Domain</label>
+        <input type="text" id="domain" placeholder="e.g., example.com" required aria-describedby="domainHelp">
+        <small id="domainHelp" class="form-text">Enter the domain without 'www.' or 'https://'</small>
+      </div>
+      <div class="form-group">
+        <label for="timeLimit">Time Limit (minutes)</label>
+        <input type="number" id="timeLimit" placeholder="0 for no limit" required>
+      </div>
+      <div class="form-group">
+        <label for="visitLimit">Visit Limit</label>
+        <input type="number" id="visitLimit" placeholder="0 for unlimited visits" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Site</button>
+    </form>
+  </section>
+  <section class="site-list">
+    <h2>Monitored Sites</h2>
+    <ul id="site-list" aria-label="List of monitored sites"></ul>
+  </section>
   <script src="options.js"></script>
 </body>
 </html>
