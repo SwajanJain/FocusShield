@@ -1,12 +1,20 @@
 // popup.js
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Existing initialization
   restoreSiteList();
   document.getElementById('add-site-form').addEventListener('submit', addSite);
-
-  // Display browsing insights if applicable
   displaySiteHistory();
+
+  // New bottom nav button listeners for tab switching
+  document.getElementById('nav-home').addEventListener('click', () => switchView('home'));
+  document.getElementById('nav-todo').addEventListener('click', () => switchView('todo'));
+  document.getElementById('nav-pomo').addEventListener('click', () => switchView('pomo'));
 });
+
+// =====================
+//   Existing Functions
+// =====================
 
 // Function to add a new site
 async function addSite(e) {
@@ -232,4 +240,31 @@ async function displaySiteHistory() {
     });
     usageSummary.appendChild(siteDiv);
   });
+}
+
+// =====================
+//   NEW NAV FUNCTION
+// =====================
+function switchView(view) {
+  // Hide all sections
+  document.getElementById('home-section').style.display = 'none';
+  document.getElementById('todo-section').style.display = 'none';
+  document.getElementById('pomo-section').style.display = 'none';
+
+  // Remove 'active' class from nav buttons
+  document.getElementById('nav-home').classList.remove('active');
+  document.getElementById('nav-todo').classList.remove('active');
+  document.getElementById('nav-pomo').classList.remove('active');
+
+  // Show the chosen section & set active button
+  if (view === 'home') {
+    document.getElementById('home-section').style.display = 'block';
+    document.getElementById('nav-home').classList.add('active');
+  } else if (view === 'todo') {
+    document.getElementById('todo-section').style.display = 'block';
+    document.getElementById('nav-todo').classList.add('active');
+  } else if (view === 'pomo') {
+    document.getElementById('pomo-section').style.display = 'block';
+    document.getElementById('nav-pomo').classList.add('active');
+  }
 }
