@@ -1,254 +1,287 @@
 /* ---------------------------------------------------
    1) BASE & CONTAINER STYLES
-   --------------------------------------------------- */
+--------------------------------------------------- */
 
-   body {
-    font-family: Arial, sans-serif;
-    width: 350px; /* Adjust to your preferred popup width */
-    margin: 0;
-    padding: 0;
-    /* Add extra bottom padding to ensure content doesn't get covered by the bottom nav */
-    padding-bottom: 60px;
-  }
-  
+body {
+  font-family: Arial, sans-serif;
+  width: 350px; /* Adjust to your preferred popup width */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* We'll handle scrolling in a separate container, so hide body overflow. */
+  overflow: hidden;
+}
+
+/* 
+  .main-content:
+  Create a container for your scrollable content above the nav bar.
+*/
+.main-content {
+  height: calc(100% - 50px);  /* 50px is the bottom nav height */
+  overflow-y: auto;           /* allows vertical scrolling */
+  /* If you prefer spacing, add padding here. E.g.: */
+  /* padding: 20px; */
+  box-sizing: border-box;
+}
+
+/* 
+  .container:
+  Used as an inner container for styling each section (Home, etc.).
+  You can keep or remove this if you prefer direct styling in .main-content.
+*/
+.container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  width: 100%;
+  max-width: 600px; /* Adjust as needed for larger popups or scaling */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin-bottom: 16px; /* Some spacing after each container block */
+}
+
+/* ---------------------------------------------------
+   2) HEADERS & TITLES
+--------------------------------------------------- */
+
+header h1 {
+  font-size: 24px;
+  text-align: center;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+h2 {
+  font-size: 20px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* ---------------------------------------------------
+   3) FORMS & INPUTS
+--------------------------------------------------- */
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 8px;
+  display: block;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 95%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+button.submit-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+button.submit-btn:hover {
+  background-color: #218838;
+}
+
+/* ---------------------------------------------------
+   4) MONITORED SITES SECTION
+--------------------------------------------------- */
+
+.monitored-sites {
+  margin-top: 25px;
+}
+
+#site-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#site-list li {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Site information */
+.site-info {
+  margin-bottom: 10px;
+}
+
+.site-domain {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.site-usage {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Progress bars */
+progress {
+  width: 100%;
+  height: 12px;
+  margin: 7px 0;
+  -webkit-appearance: none; /* Remove default styling for WebKit browsers */
+  appearance: none;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #f3f3f3;
+  border-radius: 4px;
+}
+
+progress::-webkit-progress-value {
+  background-color: #007bff;
+  border-radius: 4px;
+}
+
+/* Action buttons */
+.site-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.site-actions button {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.site-actions button:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------
+   5) BROWSING INSIGHTS
+--------------------------------------------------- */
+
+.browsing-insights {
+  margin-top: 25px;
+}
+
+#usage-summary div {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+}
+
+#usage-summary div:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------
+   6) RESPONSIVE ADJUSTMENTS
+--------------------------------------------------- */
+
+@media (max-width: 650px) {
   .container {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    width: 100%;
-    max-width: 600px; /* Adjust as needed for larger popups or scaling */
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-sizing: border-box;
-  }
-  
-  /* ---------------------------------------------------
-     2) HEADERS & TITLES
-     --------------------------------------------------- */
-  
-  header h1 {
-    font-size: 24px;
-    text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-  }
-  
-  h2 {
-    font-size: 20px;
-    color: #555;
-    margin-bottom: 15px;
-  }
-  
-  /* ---------------------------------------------------
-     3) FORMS & INPUTS
-     --------------------------------------------------- */
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-group {
-    margin-bottom: 18px;
-  }
-  
-  label {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 8px;
-    display: block;
-  }
-  
-  input[type="text"],
-  input[type="number"] {
-    width: 95%;
-    padding: 10px;
-    font-size: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  input[type="text"]:focus,
-  input[type="number"]:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-  }
-  
-  button.submit-btn {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    font-size: 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 12px;
-  }
-  
-  button.submit-btn:hover {
-    background-color: #218838;
-  }
-  
-  /* ---------------------------------------------------
-     4) MONITORED SITES SECTION
-     --------------------------------------------------- */
-  
-  .monitored-sites {
-    margin-top: 25px;
-  }
-  
-  #site-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  #site-list li {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     padding: 15px;
-    margin-bottom: 12px;
-    display: flex;
-    flex-direction: column;
+    max-width: 100%;
   }
-  
-  /* Site information */
-  .site-info {
-    margin-bottom: 10px;
-  }
-  
-  .site-domain {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .site-usage {
-    font-size: 14px;
-    color: #666;
-  }
-  
-  /* Progress bars */
-  progress {
-    width: 100%;
-    height: 12px;
-    margin: 7px 0;
-    -webkit-appearance: none; /* Remove default styling for WebKit browsers */
-    appearance: none;
-  }
-  
-  progress::-webkit-progress-bar {
-    background-color: #f3f3f3;
-    border-radius: 4px;
-  }
-  
-  progress::-webkit-progress-value {
-    background-color: #007bff;
-    border-radius: 4px;
-  }
-  
-  /* Action buttons */
-  .site-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-  }
-  
-  .site-actions button {
-    background: none;
-    border: none;
-    color: #007bff;
-    font-size: 15px;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
-  .site-actions button:hover {
-    color: #0056b3;
-    text-decoration: none;
-  }
-  
-  /* ---------------------------------------------------
-     5) BROWSING INSIGHTS
-     --------------------------------------------------- */
-  
-  .browsing-insights {
-    margin-top: 25px;
-  }
-  
-  #usage-summary div {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #555;
-    cursor: pointer;
-  }
-  
-  #usage-summary div:hover {
-    color: #007bff;
-    text-decoration: underline;
-  }
-  
-  /* ---------------------------------------------------
-     6) RESPONSIVE ADJUSTMENTS
-     --------------------------------------------------- */
-  
-  @media (max-width: 650px) {
-    .container {
-      padding: 15px;
-      max-width: 100%;
-    }
-  }
-  
-  /* ---------------------------------------------------
-     7) BOTTOM NAVIGATION BAR (NEW)
-     --------------------------------------------------- */
-  
-  /* Optional: If each "view" is toggled via JS, you can
-     add a .view class for sections, or rely on inline
-     style changes (display: none/block). */
+}
+
+/* ---------------------------------------------------
+   7) NAVIGATION & TAB VIEWS
+--------------------------------------------------- */
+
+/* 
   .view 
-    /* Not strictly required if you hide/show via JS inline style,
-       but you can use .active if you prefer class-based toggling. */
-  
-  /* Bottom nav container */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 350px; /* match the body's width if you want it aligned exactly */
-    background-color: #ffffff;
-    border-top: 1px solid #ccc;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    height: 50px;
-    box-sizing: border-box;
-  }
-  
-  /* You can do 100% width if you prefer:
-     .bottom-nav {
-       width: 100%;
-     }
-  */
-  
-  /* Nav buttons */
-  .nav-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 10px;
-    transition: background-color 0.3s;
-  }
-  
-  /* Hover or focus states (optional) */
-  .nav-btn:hover {
-    background-color: #f3f3f3;
-  }
-  
-  /* Active nav button highlight */
-  .nav-btn.active {
-    background-color: #dddddd; /* or #eee, for clarity */
-    font-weight: bold;
-  }
+    Optional if you show/hide sections via inline styles.
+    You could add .view.active to the displayed section.
+*/
+
+/* BOTTOM NAVIGATION BAR */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 350px; /* match the body width (350px) */
+  height: 50px;
+  background-color: #ffffff;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Navigation buttons in the bottom nav */
+.nav-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 10px;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.nav-btn:hover {
+  background-color: #f3f3f3;
+}
+
+.nav-btn.active {
+  background-color: #dddddd;
+  font-weight: bold;
+}
+
+/* ---------------------------------------------------
+   8) BROWSING INSIGHTS TABLE STYLES
+--------------------------------------------------- */
+
+.browsing-insights table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.browsing-insights th,
+.browsing-insights td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.browsing-insights th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
