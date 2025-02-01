@@ -94,13 +94,32 @@
     </section>
 
     <!-- TO-DO SECTION -->
-    <section id="todo-section" class="view" style="display: none;">
-      <div class="container">
-        <h2>To-Do List</h2>
-        <p>Coming Soon!</p>
-        <!-- Future: Your to-do list form, tasks, etc. -->
-      </div>
-    </section>
+<section id="todo-section" class="view" style="display: none;">
+  <div class="container">
+    <h2>To-Do List</h2>
+    <!-- New To-Do Input Form -->
+    <div class="todo-input">
+      <input type="text" id="new-task-input" placeholder="Enter your task" aria-label="New task" />
+      <button id="add-task-btn" aria-label="Add Task">
+        <!-- Optionally use an icon here -->
+        Add Task
+      </button>
+    </div>
+    <!-- Task List Container -->
+    <!-- 
+      Each task will be rendered as follows (example markup):
+      <li class="task-card">
+         <input type="checkbox" class="task-checkbox">
+         <div class="task-content">
+             <span class="task-title">Task Name</span>
+         </div>
+         <button class="delete-btn" aria-label="Delete Task">
+             <i class="fa fa-trash"></i> or text: "Delete" -->
+         </button>
+      </li>
+    <ul id="todo-list" class="todo-list"></ul>
+  </div>
+</section>
 
     <!-- POMODORO SECTION -->
     <section id="pomo-section" class="view" style="display: none;">
@@ -121,5 +140,6 @@
   </nav>
 
   <script src="popup.js"></script>
+  <script src="todo.js"></script>
 </body>
 </html>
