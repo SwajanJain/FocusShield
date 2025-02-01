@@ -92,6 +92,7 @@ async function restoreSiteList() {
 
   const localData = await chrome.storage.local.get(['usage', 'siteUsage']);
   const usage = localData.usage || {};
+  // siteUsage is maintained in the background for persistent time tracking
   const siteUsage = localData.siteUsage || {};
 
   const siteList = document.getElementById('site-list');
@@ -107,7 +108,7 @@ async function restoreSiteList() {
     domainSpan.textContent = site.domain;
     domainSpan.classList.add('site-domain');
 
-    // Retrieve usage data for the site
+    // Retrieve usage data for the site from our 'usage' object
     const siteUsageData = usage[site.domain] || { time: 0, visits: 0, notified: false };
     const timeUsage = siteUsageData.time;
     const visitUsage = siteUsageData.visits;
@@ -204,42 +205,91 @@ async function editSite(index) {
   restoreSiteList();
 }
 
-// Listen for messages from background.js
+// Listen for messages from background.js to update usage data
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'updateUsage') {
     restoreSiteList();
+    displaySiteHistory();
   }
 });
 
-// Function to display browsing insights (optional)
+// =====================
+//   UPDATED Browsing Insights
+// =====================
+// New displaySiteHistory() builds a table with columns for Website, Visits, and Time (min)
 async function displaySiteHistory() {
-  const data = await chrome.storage.local.get('siteHistory');
-  const siteHistory = data.siteHistory || {};
+  // Retrieve siteHistory (from analyzed browsing history) and siteUsage (time tracking in ms)
+  const dataHistory = await chrome.storage.local.get('siteHistory');
+  const siteHistory = dataHistory.siteHistory || {};
+  const dataUsage = await chrome.storage.local.get('siteUsage');
+  const siteUsage = dataUsage.siteUsage || {};
 
   const usageSummary = document.getElementById('usage-summary');
-  if (!usageSummary) return; // If no usage summary element, exit
+  if (!usageSummary) return; // Exit if the element isn't found
 
+  // Clear any existing content
   usageSummary.innerHTML = '';
 
-  const sortedSites = Object.entries(siteHistory)
-    .sort((a, b) => b[1].visits - a[1].visits)
-    .slice(0, 10); // Display top 10 sites
+  // Create the table
+  const table = document.createElement('table');
+  table.classList.add('insights-table'); // Use this class for styling (see popup.css)
 
-  sortedSites.forEach(([domain, info]) => {
-    const siteDiv = document.createElement('div');
-    siteDiv.textContent = `${domain} - Visits: ${info.visits}`;
-    siteDiv.addEventListener('click', () => {
-      classifySite(domain, (classification) => {
-        // Save classification for unmonitored sites
-        chrome.storage.sync.get('userClassifications', (data) => {
-          const userClassifications = data.userClassifications || {};
-          userClassifications[domain] = classification;
-          chrome.storage.sync.set({ userClassifications });
-        });
-      });
-    });
-    usageSummary.appendChild(siteDiv);
+  // Create table header row
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+
+  const thWebsite = document.createElement('th');
+  thWebsite.textContent = 'Website';
+
+  const thVisits = document.createElement('th');
+  thVisits.textContent = 'Visits';
+
+  const thTime = document.createElement('th');
+  thTime.textContent = 'Time (min)';
+
+  headerRow.appendChild(thWebsite);
+  headerRow.appendChild(thVisits);
+  headerRow.appendChild(thTime);
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  // Create table body
+  const tbody = document.createElement('tbody');
+
+  // Merge domains from both siteHistory and siteUsage so we capture all data
+  const domains = new Set([...Object.keys(siteHistory), ...Object.keys(siteUsage)]);
+  // Optionally, sort domains by time spent (descending)
+  const sortedDomains = Array.from(domains).sort((a, b) => {
+    const timeA = siteUsage[a] || 0;
+    const timeB = siteUsage[b] || 0;
+    return timeB - timeA;
   });
+
+  // Limit to top 10 entries if desired
+  sortedDomains.slice(0, 10).forEach((domain) => {
+    const visits = siteHistory[domain] ? siteHistory[domain].visits : 0;
+    const timeMs = siteUsage[domain] || 0;
+    const timeMin = Math.floor(timeMs / 60000);
+
+    const tr = document.createElement('tr');
+
+    const tdDomain = document.createElement('td');
+    tdDomain.textContent = domain;
+
+    const tdVisits = document.createElement('td');
+    tdVisits.textContent = visits;
+
+    const tdTime = document.createElement('td');
+    tdTime.textContent = timeMin;
+
+    tr.appendChild(tdDomain);
+    tr.appendChild(tdVisits);
+    tr.appendChild(tdTime);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  usageSummary.appendChild(table);
 }
 
 // =====================
