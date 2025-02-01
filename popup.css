@@ -1,287 +1,343 @@
-/* ---------------------------------------------------
-   1) BASE & CONTAINER STYLES
---------------------------------------------------- */
+// popup.js
 
-body {
-  font-family: Arial, sans-serif;
-  width: 350px; /* Adjust to your preferred popup width */
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  /* We'll handle scrolling in a separate container, so hide body overflow. */
-  overflow: hidden;
+document.addEventListener('DOMContentLoaded', () => {
+  // Existing initialization
+  restoreSiteList();
+  document.getElementById('add-site-form').addEventListener('submit', addSite);
+  displaySiteHistory();
+
+  // New bottom nav button listeners for tab switching
+  document.getElementById('nav-home').addEventListener('click', () => {
+    switchView('home');
+  });
+  document.getElementById('nav-todo').addEventListener('click', () => {
+    switchView('todo');
+    // Load To-Do tasks when the To-Do tab is activated
+    if (window.todoFunctions && typeof window.todoFunctions.loadTasks === 'function') {
+      window.todoFunctions.loadTasks();
+    }
+  });
+  document.getElementById('nav-pomo').addEventListener('click', () => {
+    switchView('pomo');
+  });
+
+  // Add event listener for the "Add Task" button in the To-Do section
+  const addTaskBtn = document.getElementById('add-task-btn');
+  if (addTaskBtn) {
+    addTaskBtn.addEventListener('click', () => {
+      const newTaskInput = document.getElementById('new-task-input');
+      const taskTitle = newTaskInput.value.trim();
+      if (taskTitle !== '') {
+        window.todoFunctions.addTask(taskTitle);
+        newTaskInput.value = '';
+      }
+    });
+  }
+});
+
+// =====================
+//   Existing Functions
+// =====================
+
+// Function to add a new site
+async function addSite(e) {
+  e.preventDefault();
+
+  const domainInput = document.getElementById('new-domain');
+  const timeLimitInput = document.getElementById('new-timeLimit');
+  const visitLimitInput = document.getElementById('new-visitLimit');
+
+  const domain = domainInput.value.trim();
+  const timeLimit = parseInt(timeLimitInput.value, 10);
+  const visitLimit = parseInt(visitLimitInput.value, 10);
+  const timestamp = Date.now();
+
+  if (!domain || isNaN(timeLimit) || isNaN(visitLimit)) {
+    alert('Please fill in all fields correctly.');
+    return;
+  }
+
+  const data = await chrome.storage.sync.get(['sites', 'userClassifications']);
+  const sites = data.sites || [];
+  const userClassifications = data.userClassifications || {};
+
+  // Check if the site already exists
+  if (sites.some((site) => site.domain === domain)) {
+    alert('This site is already being monitored.');
+    return;
+  }
+
+  // Prompt user to classify the site
+  classifySite(domain, (classification) => {
+    userClassifications[domain] = classification;
+    chrome.storage.sync.set({ userClassifications });
+
+    sites.push({ domain, timeLimit, visitLimit, timestamp });
+    chrome.storage.sync.set({ sites });
+
+    // Reset form inputs
+    domainInput.value = '';
+    timeLimitInput.value = '';
+    visitLimitInput.value = '';
+
+    restoreSiteList();
+  });
 }
 
-/* 
-  .main-content:
-  Create a container for your scrollable content above the nav bar.
-*/
-.main-content {
-  height: calc(100% - 50px);  /* 50px is the bottom nav height */
-  overflow-y: auto;           /* allows vertical scrolling */
-  /* If you prefer spacing, add padding here. E.g.: */
-  /* padding: 20px; */
-  box-sizing: border-box;
-}
+// Function to classify a site
+function classifySite(domain, callback) {
+  const classification = prompt(`Classify ${domain} as:
+1. Productive
+2. Unproductive
+3. Neutral`, '1');
 
-/* 
-  .container:
-  Used as an inner container for styling each section (Home, etc.).
-  You can keep or remove this if you prefer direct styling in .main-content.
-*/
-.container {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  width: 100%;
-  max-width: 600px; /* Adjust as needed for larger popups or scaling */
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-sizing: border-box;
-  margin-bottom: 16px; /* Some spacing after each container block */
-}
+  const classificationMap = {
+    '1': 'Productive',
+    '2': 'Unproductive',
+    '3': 'Neutral',
+  };
 
-/* ---------------------------------------------------
-   2) HEADERS & TITLES
---------------------------------------------------- */
+  const userClassification = classificationMap[classification];
 
-header h1 {
-  font-size: 24px;
-  text-align: center;
-  color: #333;
-  margin-bottom: 25px;
-}
-
-h2 {
-  font-size: 20px;
-  color: #555;
-  margin-bottom: 15px;
-}
-
-/* ---------------------------------------------------
-   3) FORMS & INPUTS
---------------------------------------------------- */
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group {
-  margin-bottom: 18px;
-}
-
-label {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 8px;
-  display: block;
-}
-
-input[type="text"],
-input[type="number"] {
-  width: 95%;
-  padding: 10px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-button.submit-btn {
-  background-color: #28a745;
-  color: white;
-  padding: 12px 20px;
-  font-size: 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 12px;
-}
-
-button.submit-btn:hover {
-  background-color: #218838;
-}
-
-/* ---------------------------------------------------
-   4) MONITORED SITES SECTION
---------------------------------------------------- */
-
-.monitored-sites {
-  margin-top: 25px;
-}
-
-#site-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-#site-list li {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 15px;
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Site information */
-.site-info {
-  margin-bottom: 10px;
-}
-
-.site-domain {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-}
-
-.site-usage {
-  font-size: 14px;
-  color: #666;
-}
-
-/* Progress bars */
-progress {
-  width: 100%;
-  height: 12px;
-  margin: 7px 0;
-  -webkit-appearance: none; /* Remove default styling for WebKit browsers */
-  appearance: none;
-}
-
-progress::-webkit-progress-bar {
-  background-color: #f3f3f3;
-  border-radius: 4px;
-}
-
-progress::-webkit-progress-value {
-  background-color: #007bff;
-  border-radius: 4px;
-}
-
-/* Action buttons */
-.site-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-}
-
-.site-actions button {
-  background: none;
-  border: none;
-  color: #007bff;
-  font-size: 15px;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.site-actions button:hover {
-  color: #0056b3;
-  text-decoration: none;
-}
-
-/* ---------------------------------------------------
-   5) BROWSING INSIGHTS
---------------------------------------------------- */
-
-.browsing-insights {
-  margin-top: 25px;
-}
-
-#usage-summary div {
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #555;
-  cursor: pointer;
-}
-
-#usage-summary div:hover {
-  color: #007bff;
-  text-decoration: underline;
-}
-
-/* ---------------------------------------------------
-   6) RESPONSIVE ADJUSTMENTS
---------------------------------------------------- */
-
-@media (max-width: 650px) {
-  .container {
-    padding: 15px;
-    max-width: 100%;
+  if (userClassification) {
+    callback(userClassification);
+  } else {
+    alert('Invalid classification. Please try again.');
+    classifySite(domain, callback);
   }
 }
 
-/* ---------------------------------------------------
-   7) NAVIGATION & TAB VIEWS
---------------------------------------------------- */
+// Function to restore the site list and usage data
+async function restoreSiteList() {
+  const data = await chrome.storage.sync.get(['sites', 'userClassifications']);
+  const sites = data.sites || [];
+  const userClassifications = data.userClassifications || {};
 
-/* 
-  .view 
-    Optional if you show/hide sections via inline styles.
-    You could add .view.active to the displayed section.
-*/
+  const localData = await chrome.storage.local.get(['usage', 'siteUsage']);
+  const usage = localData.usage || {};
+  // siteUsage is maintained in the background for persistent time tracking
+  const siteUsage = localData.siteUsage || {};
 
-/* BOTTOM NAVIGATION BAR */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 350px; /* match the body width (350px) */
-  height: 50px;
-  background-color: #ffffff;
-  border-top: 1px solid #ccc;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-sizing: border-box;
+  const siteList = document.getElementById('site-list');
+  siteList.innerHTML = '';
+
+  sites.forEach((site, index) => {
+    const li = document.createElement('li');
+
+    const siteInfo = document.createElement('div');
+    siteInfo.classList.add('site-info');
+
+    const domainSpan = document.createElement('span');
+    domainSpan.textContent = site.domain;
+    domainSpan.classList.add('site-domain');
+
+    // Retrieve usage data for the site from our 'usage' object
+    const siteUsageData = usage[site.domain] || { time: 0, visits: 0, notified: false };
+    const timeUsage = siteUsageData.time;
+    const visitUsage = siteUsageData.visits;
+
+    // Get classification
+    const classification = userClassifications[site.domain] || 'Unclassified';
+
+    // Create usage text
+    const usageText = document.createElement('span');
+    usageText.classList.add('site-usage');
+    usageText.innerHTML = `
+      Classification: ${classification}<br>
+      Time: ${timeUsage}/${site.timeLimit} min<br>
+      Visits: ${visitUsage}/${site.visitLimit}
+    `;
+
+    // Progress bars
+    const timeProgress = document.createElement('progress');
+    timeProgress.max = site.timeLimit;
+    timeProgress.value = timeUsage;
+    timeProgress.classList.add('progress-time');
+
+    const visitProgress = document.createElement('progress');
+    visitProgress.max = site.visitLimit;
+    visitProgress.value = visitUsage;
+    visitProgress.classList.add('progress-visits');
+
+    // Buttons
+    const siteActions = document.createElement('div');
+    siteActions.classList.add('site-actions');
+
+    const classifyBtn = document.createElement('button');
+    classifyBtn.textContent = 'Classify';
+    classifyBtn.classList.add('classify-btn');
+    classifyBtn.addEventListener('click', () => {
+      classifySite(site.domain, (classification) => {
+        userClassifications[site.domain] = classification;
+        chrome.storage.sync.set({ userClassifications });
+        restoreSiteList();
+      });
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.add('edit-btn');
+    editBtn.addEventListener('click', () => editSite(index));
+
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.classList.add('remove-btn');
+    removeBtn.addEventListener('click', async () => {
+      if (confirm(`Are you sure you want to remove ${site.domain}?`)) {
+        sites.splice(index, 1);
+        await chrome.storage.sync.set({ sites });
+        restoreSiteList();
+      }
+    });
+
+    siteActions.appendChild(classifyBtn);
+    siteActions.appendChild(editBtn);
+    siteActions.appendChild(removeBtn);
+
+    siteInfo.appendChild(domainSpan);
+    siteInfo.appendChild(usageText);
+    siteInfo.appendChild(timeProgress);
+    siteInfo.appendChild(visitProgress);
+
+    li.appendChild(siteInfo);
+    li.appendChild(siteActions);
+
+    siteList.appendChild(li);
+  });
 }
 
-/* Navigation buttons in the bottom nav */
-.nav-btn {
-  flex: 1;
-  background: none;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 10px;
-  transition: background-color 0.3s;
-  text-align: center;
+// Function to edit a site's limits
+async function editSite(index) {
+  const data = await chrome.storage.sync.get('sites');
+  const sites = data.sites || [];
+
+  const site = sites[index];
+
+  const domainInput = document.getElementById('new-domain');
+  const timeLimitInput = document.getElementById('new-timeLimit');
+  const visitLimitInput = document.getElementById('new-visitLimit');
+
+  domainInput.value = site.domain;
+  timeLimitInput.value = site.timeLimit;
+  visitLimitInput.value = site.visitLimit;
+
+  // Remove the site temporarily to avoid duplicates
+  sites.splice(index, 1);
+  await chrome.storage.sync.set({ sites });
+
+  restoreSiteList();
 }
 
-.nav-btn:hover {
-  background-color: #f3f3f3;
+// Listen for messages from background.js to update usage data
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'updateUsage') {
+    restoreSiteList();
+    displaySiteHistory();
+  }
+});
+
+// =====================
+//   UPDATED Browsing Insights
+// =====================
+// New displaySiteHistory() builds a table with columns for Website, Visits, and Time (min)
+async function displaySiteHistory() {
+  // Retrieve siteHistory (from analyzed browsing history) and siteUsage (time tracking in ms)
+  const dataHistory = await chrome.storage.local.get('siteHistory');
+  const siteHistory = dataHistory.siteHistory || {};
+  const dataUsage = await chrome.storage.local.get('siteUsage');
+  const siteUsage = dataUsage.siteUsage || {};
+
+  const usageSummary = document.getElementById('usage-summary');
+  if (!usageSummary) return; // Exit if the element isn't found
+
+  // Clear any existing content
+  usageSummary.innerHTML = '';
+
+  // Create the table
+  const table = document.createElement('table');
+  table.classList.add('insights-table'); // Use this class for styling (see popup.css)
+
+  // Create table header row
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+
+  const thWebsite = document.createElement('th');
+  thWebsite.textContent = 'Website';
+
+  const thVisits = document.createElement('th');
+  thVisits.textContent = 'Visits';
+
+  const thTime = document.createElement('th');
+  thTime.textContent = 'Time (min)';
+
+  headerRow.appendChild(thWebsite);
+  headerRow.appendChild(thVisits);
+  headerRow.appendChild(thTime);
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  // Create table body
+  const tbody = document.createElement('tbody');
+
+  // Merge domains from both siteHistory and siteUsage so we capture all data
+  const domains = new Set([...Object.keys(siteHistory), ...Object.keys(siteUsage)]);
+  // Optionally, sort domains by time spent (descending)
+  const sortedDomains = Array.from(domains).sort((a, b) => {
+    const timeA = siteUsage[a] || 0;
+    const timeB = siteUsage[b] || 0;
+    return timeB - timeA;
+  });
+
+  // Limit to top 10 entries if desired
+  sortedDomains.slice(0, 10).forEach((domain) => {
+    const visits = siteHistory[domain] ? siteHistory[domain].visits : 0;
+    const timeMs = siteUsage[domain] || 0;
+    const timeMin = Math.floor(timeMs / 60000);
+
+    const tr = document.createElement('tr');
+
+    const tdDomain = document.createElement('td');
+    tdDomain.textContent = domain;
+
+    const tdVisits = document.createElement('td');
+    tdVisits.textContent = visits;
+
+    const tdTime = document.createElement('td');
+    tdTime.textContent = timeMin;
+
+    tr.appendChild(tdDomain);
+    tr.appendChild(tdVisits);
+    tr.appendChild(tdTime);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  usageSummary.appendChild(table);
 }
 
-.nav-btn.active {
-  background-color: #dddddd;
-  font-weight: bold;
-}
+// =====================
+//   NEW NAV FUNCTION
+// =====================
+function switchView(view) {
+  // Hide all sections
+  document.getElementById('home-section').style.display = 'none';
+  document.getElementById('todo-section').style.display = 'none';
+  document.getElementById('pomo-section').style.display = 'none';
 
-/* ---------------------------------------------------
-   8) BROWSING INSIGHTS TABLE STYLES
---------------------------------------------------- */
+  // Remove 'active' class from nav buttons
+  document.getElementById('nav-home').classList.remove('active');
+  document.getElementById('nav-todo').classList.remove('active');
+  document.getElementById('nav-pomo').classList.remove('active');
 
-.browsing-insights table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.browsing-insights th,
-.browsing-insights td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.browsing-insights th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+  // Show the chosen section & set active button
+  if (view === 'home') {
+    document.getElementById('home-section').style.display = 'block';
+    document.getElementById('nav-home').classList.add('active');
+  } else if (view === 'todo') {
+    document.getElementById('todo-section').style.display = 'block';
+    document.getElementById('nav-todo').classList.add('active');
+  } else if (view === 'pomo') {
+    document.getElementById('pomo-section').style.display = 'block';
+    document.getElementById('nav-pomo').classList.add('active');
+  }
 }
