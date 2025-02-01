@@ -7,9 +7,32 @@ document.addEventListener('DOMContentLoaded', () => {
   displaySiteHistory();
 
   // New bottom nav button listeners for tab switching
-  document.getElementById('nav-home').addEventListener('click', () => switchView('home'));
-  document.getElementById('nav-todo').addEventListener('click', () => switchView('todo'));
-  document.getElementById('nav-pomo').addEventListener('click', () => switchView('pomo'));
+  document.getElementById('nav-home').addEventListener('click', () => {
+    switchView('home');
+  });
+  document.getElementById('nav-todo').addEventListener('click', () => {
+    switchView('todo');
+    // Load To-Do tasks when the To-Do tab is activated
+    if (window.todoFunctions && typeof window.todoFunctions.loadTasks === 'function') {
+      window.todoFunctions.loadTasks();
+    }
+  });
+  document.getElementById('nav-pomo').addEventListener('click', () => {
+    switchView('pomo');
+  });
+
+  // Add event listener for the "Add Task" button in the To-Do section
+  const addTaskBtn = document.getElementById('add-task-btn');
+  if (addTaskBtn) {
+    addTaskBtn.addEventListener('click', () => {
+      const newTaskInput = document.getElementById('new-task-input');
+      const taskTitle = newTaskInput.value.trim();
+      if (taskTitle !== '') {
+        window.todoFunctions.addTask(taskTitle);
+        newTaskInput.value = '';
+      }
+    });
+  }
 });
 
 // =====================
