@@ -4,96 +4,116 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FocusShield</title>
-  <!-- Link your existing popup.css or a combined stylesheet -->
+  <!-- Link to your popup.css -->
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
+  <!-- 
+    .main-content will be the scrollable area,
+    ensuring the nav bar remains pinned at the bottom.
+  -->
+  <div class="main-content">
+    
+    <!-- HOME SECTION (active by default) -->
+    <section id="home-section" class="view active">
+      <div class="container">
+        <header>
+          <h1>FocusShield</h1>
+        </header>
 
-  <!-- HOME SECTION (active by default) -->
-  <!-- Wrap all of your existing "Home" content inside this section -->
-  <section id="home-section" class="view active">
-    <div class="container">
-      <header>
-        <h1>FocusShield</h1>
-      </header>
+        <!-- Add-Site Content -->
+        <section class="add-site">
+          <h2>Add Monitored Site</h2>
+          <form id="add-site-form">
+            <div class="form-group">
+              <label for="new-domain">Website (e.g., example.com):</label>
+              <input
+                type="text"
+                id="new-domain"
+                name="new-domain"
+                placeholder="Enter website domain"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="new-timeLimit">Time Limit (minutes):</label>
+              <input
+                type="number"
+                id="new-timeLimit"
+                name="new-timeLimit"
+                min="0"
+                placeholder="0 for no limit"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="new-visitLimit">Visit Limit:</label>
+              <input
+                type="number"
+                id="new-visitLimit"
+                name="new-visitLimit"
+                min="0"
+                placeholder="0 for unlimited visits"
+                required
+              />
+            </div>
+            <button type="submit" class="submit-btn">Add Site</button>
+          </form>
+        </section>
 
-      <!-- Existing Add-Site Content -->
-      <section class="add-site">
-        <h2>Add Monitored Site</h2>
-        <form id="add-site-form">
-          <div class="form-group">
-            <label for="new-domain">Website (e.g., example.com):</label>
-            <input
-              type="text"
-              id="new-domain"
-              name="new-domain"
-              placeholder="Enter website domain"
-              required
-            />
+        <!-- Monitored Sites List -->
+        <section class="monitored-sites">
+          <h2>Monitored Sites</h2>
+          <ul id="site-list" aria-describedby="monitored-sites-desc">
+            <!-- Dynamically filled by popup.js -->
+          </ul>
+        </section>
+
+        <!-- Browsing Insights -->
+        <section class="browsing-insights">
+          <h2>Your Browsing Insights</h2>
+          <div id="usage-summary">
+            <!--
+              The popup.js script will dynamically populate this area with a table:
+              <table>
+                <thead>
+                  <tr>
+                    <th>Website</th>
+                    <th>Visits</th>
+                    <th>Time (min)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Table rows inserted here -->
+                </tbody>
+              </table>
+            -->
           </div>
-          <div class="form-group">
-            <label for="new-timeLimit">Time Limit (minutes):</label>
-            <input
-              type="number"
-              id="new-timeLimit"
-              name="new-timeLimit"
-              min="0"
-              placeholder="0 for no limit"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="new-visitLimit">Visit Limit:</label>
-            <input
-              type="number"
-              id="new-visitLimit"
-              name="new-visitLimit"
-              min="0"
-              placeholder="0 for unlimited visits"
-              required
-            />
-          </div>
-          <button type="submit" class="submit-btn">Add Site</button>
-        </form>
-      </section>
+        </section>
+      </div>
+    </section>
 
-      <!-- Existing Monitored Sites List -->
-      <section class="monitored-sites">
-        <h2>Monitored Sites</h2>
-        <ul id="site-list" aria-describedby="monitored-sites-desc">
-          <!-- Dynamically filled by popup.js -->
-        </ul>
-      </section>
+    <!-- TO-DO SECTION -->
+    <section id="todo-section" class="view" style="display: none;">
+      <div class="container">
+        <h2>To-Do List</h2>
+        <p>Coming Soon!</p>
+        <!-- Future: Your to-do list form, tasks, etc. -->
+      </div>
+    </section>
 
-      <!-- Existing Browsing Insights -->
-      <section class="browsing-insights">
-        <h2>Your Browsing Insights</h2>
-        <div id="usage-summary">
-          <!-- Dynamically filled by popup.js -->
-        </div>
-      </section>
-    </div>
-  </section>
+    <!-- POMODORO SECTION -->
+    <section id="pomo-section" class="view" style="display: none;">
+      <div class="container">
+        <h2>Pomodoro Timer</h2>
+        <p>Coming Soon!</p>
+        <!-- Future: Timer logic, countdown display, start/stop buttons, etc. -->
+      </div>
+    </section>
 
-  <!-- TO-DO SECTION (placeholder for future to-do list) -->
-  <section id="todo-section" class="view" style="display: none;">
-    <div class="container">
-      <h2>To-Do List</h2>
-      <p>Coming Soon!</p>
-      <!-- Future: Your to-do list form, tasks, etc. -->
-    </div>
-  </section>
+  </div> <!-- end of .main-content -->
 
-  <!-- POMODORO SECTION (placeholder for future timer) -->
-  <section id="pomo-section" class="view" style="display: none;">
-    <div class="container">
-      <h2>Pomodoro Timer</h2>
-      <p>Coming Soon!</p>
-      <!-- Future: Timer logic, countdown display, start/stop buttons, etc. -->
-    </div>
-  </section>
-
-  <!-- BOTTOM NAVIGATION BAR -->
+  <!-- BOTTOM NAVIGATION BAR (fixed at the bottom) -->
   <nav class="bottom-nav">
     <button id="nav-home" class="nav-btn active">Home</button>
     <button id="nav-todo" class="nav-btn">To-Do</button>
